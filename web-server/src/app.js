@@ -1,6 +1,11 @@
+// localhost: 3000
+
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
+
+const geocode = require('./utils/geocode')
+const forecast = require('./utils/forecast')
 
 // console.log(__dirname)
 // console.log(__filename)
@@ -37,15 +42,52 @@ app.get('/about', (req, res) => {
 app.get('/help', (req, res) => {
   res.render('help', {
     title: 'Help page',
-    message: 'Pls help me',
+    message: 'Help message',
     name: 'JSOD'
   })
 })
 
 app.get('/weather', (req, res) => {
+
+  if (!req.query.address) {
+    return res.send({ // stop function execution. Do not want to send twice --> creates errors on server
+      error: 'You must provide an address'
+    })
+  }
+  console.log(req.query)
+  geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+    if (error) {
+      res.send({ error })
+      return console.log(error)
+    }
+    forecast(latitude, longitude, (error, forecastData) => {
+      if (error) {
+        res.send({ error })
+        return console.log(error)
+      }
+      console.log('\nLocation: ', location)
+      console.log("Data: ", forecastData, '\n')
+
+      res.send({
+        location,
+        description: forecastData.description,
+        temperature: forecastData.temperature,
+        feelslike: forecastData.feelslike
+      })
+    })
+  })
+})
+
+app.get('/products', (req, res) => {
+
+  if (!req.query.search) {
+    return res.send({ // stop function execution. Do not want to send twice --> creates errors on server
+      error: 'You must provide a search term'
+    })
+  }
+  console.log(req.query)
   res.send({
-    forecast: 'sunny',
-    location: 'Hawaii'
+    products: []
   })
 })
 
