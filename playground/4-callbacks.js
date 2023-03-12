@@ -1,6 +1,20 @@
 // callback function: function provided as an argument to another function
 // with the intent of having it be called later on in time
 
+const doWorkCallback = (callback) => {
+  setTimeout(() => {
+    callback(undefined, [1, 4, 7])
+  }, 500)
+}
+
+doWorkCallback((error, result) => {
+  if (error) {
+    return console.log(error)
+  }
+
+  console.log(result)
+})
+
 // setTimeout(() => {
 //   console.log('One second is up!')
 // }, 1000)
@@ -25,13 +39,13 @@
 // })
 
 
-const add = (a, b, callback) => {
-  setTimeout(() => {
-    data = a + b
-    callback(data)
-  }, 1000)
-}
+// const add = (a, b, callback) => {
+//   setTimeout(() => {
+//     data = a + b
+//     callback(data)
+//   }, 1000)
+// }
 
-add(1, 4, (data) => {
-  console.log(data) // Should print: 5
-})
+// add(1, 4, (data) => {
+//   console.log(data) // Should print: 5
+// })
